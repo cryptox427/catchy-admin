@@ -1,7 +1,5 @@
 <h1 align="center">
-  <a href="https://safdarjamal.github.io/crud-app/">
-    CRUD App
-  </a>
+    Catchy Admin
 </h1>
 
 <p align="center">
@@ -16,11 +14,6 @@
   </a>
 </p>
 
-<p align="center">
-  A simple and beautiful <a href="https://www.codecademy.com/articles/what-is-crud">CRUD</a> application built with <a href="https://reactjs.org">React</a>.
-</p>
-
-![crud-app](https://user-images.githubusercontent.com/48409548/94567114-8aa5ea80-0284-11eb-99f6-87401b099848.png)
 
 ## Technologies Used
 
@@ -33,8 +26,8 @@
 To get a local copy of the code, clone it using git:
 
 ```
-git clone https://github.com/SafdarJamal/crud-app.git
-cd crud-app
+git clone git@github.com:smithzhang0427/catchy-admin.git
+cd catchy-admin
 ```
 
 Install dependencies:
@@ -62,8 +55,8 @@ and then you can open http://localhost:3000 to view it in the browser.
 
 ## Credits
 
-CRUD App is built and maintained by [Safdar Jamal](https://safdarjamal.github.io).
+Catchy Admin is built and maintained by [Smith Zhang](https://github.com/smithzhang0427).
 
 ## License
 
-CRUD App is open-source software licensed under the [MIT License](https://github.com/SafdarJamal/crud-app/blob/master/LICENSE).
+Catchy.com
