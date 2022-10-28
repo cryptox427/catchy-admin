@@ -4,7 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from 'react-select';
 import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
-import {getDomainById, updateDomain} from "../api";
+import {getDomainById, updateDomain, getLogoImg, uploadLogo} from "../api";
+import { SERVER_HOST} from '../config'
 // const cvlist = ['CVVC','CCVC','CVCV','CVC','CCVV','CVCC']
 const cvlist = [
     {value: 'CVVC', label: 'CVVC'},
@@ -48,6 +49,9 @@ const Edit = () => {
     const [salepage, setSalepage] = useState('make offer')
     const [dailyincrease, setDailyincrease] = useState(0)
     const [initprice, setInitprice] = useState(0)
+    const [haslogo, setHaslogo] = useState(0);
+    const [logo, setLogo] = useState(null);
+    const [newlogo, setNewLogo] = useState(null)
 
     useEffect(() => {
         fetchData()
@@ -58,7 +62,7 @@ const Edit = () => {
         console.log(result);
         if (result.success) {
             const data = result.message
-            setDomainname(data.domainname)
+            setDomainname(data.domainname.split('.')[0])
             setMemberid(data.memberid)
             setExtension(data.extension)
             setMinprice(parseFloat(data.minprice.substring(1).replace(/,/g, '')))
@@ -83,6 +87,10 @@ const Edit = () => {
             setSalepage(data.salepage)
             setDailyincrease(data.dailyincrease)
             setInitprice(parseFloat(data.initprice.substring(1).replace(/,/g, '')))
+            setHaslogo(data.haslogo)
+            if (data.haslogo) {
+                setLogo(`${SERVER_HOST}/logos/${data.name}.${data.extension}.png`)
+            }
         }
     }
 
@@ -98,6 +106,18 @@ const Edit = () => {
             });
         }
         console.log(listingdate)
+        let haslogo_new = haslogo;
+
+        if (newlogo) {
+            const formData = new FormData()
+            formData.append('logo', newlogo)
+            formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
+            const result = await uploadLogo(formData)
+            console.log('upload result---', result)
+            if (result.success) {
+                haslogo_new = 1
+            }
+        }
 
         const updateResult = await updateDomain({
             id,
@@ -125,7 +145,8 @@ const Edit = () => {
             isvisible:  isvisible.value,
             salepage,
             dailyincrease,
-            initprice
+            initprice,
+            haslogo: haslogo_new
         })
         if (updateResult.success) {
             Swal.fire({
@@ -134,6 +155,9 @@ const Edit = () => {
                 text: `data has been updated.`,
                 showConfirmButton: false,
                 timer: 1500,
+                willClose(popup) {
+                    window.location.reload()
+                }
             });
         } else {
             Swal.fire({
@@ -159,8 +183,10 @@ const Edit = () => {
                     value={domainname}
                     onChange={e => setDomainname(e.target.value)}
                 />
-                {/*<label>Logo Image</label>*/}
-                {/*<input type={'file'} onChange={el => setLogo(el.target.files[0])}/>*/}
+                <label>Logo Image</label>
+                {(haslogo && logo) ? <img src={logo}/> : <div/>}
+                <input type={'file'} onChange={el => setNewLogo(el.target.files[0])}/>
+
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"

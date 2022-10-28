@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import {getDomains, deleteDomain} from "../api";
 import { useNavigate } from "react-router-dom";
-import Header from '../components/Dashboard/Header';
 import Logout from "../components/Logout";
 
 
@@ -22,13 +21,6 @@ const Dashboard = ({ setIsAuthenticated }) => {
         if (data && data.length !== 0) setDomains(data);
     }
 
-    // const handleEdit = id => {
-    //     const [employee] = domains.filter(employee => employee.id === id);
-    //
-    //     setSelectedEmployee(employee);
-    //     setIsEditing(true);
-    // };
-    //
     const handleDelete = id => {
         Swal.fire({
             icon: 'warning',
@@ -70,7 +62,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     <header>
                         <h1>Catchy Domains Management</h1>
                         <div style={{ marginTop: '30px', marginBottom: '18px' }}>
-                            <button onClick={() => navigate('add', {replace: true})}>Add Employee</button>
+                            <button onClick={() => navigate('add', {replace: true})}>Add Domain</button>
                             <Logout/>
                         </div>
                     </header>
@@ -99,7 +91,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                                         <td>{domain.listingdate}</td>
                                         <td className="text-right">
                                             <button
-                                                onClick={() => navigate(`edit/${i}`, { replace: true })}
+                                                onClick={() => navigate(`edit/${i + 1}`, { replace: true })}
                                                 className="button muted-button"
                                             >
                                                 Edit
@@ -117,7 +109,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7}>No Employees</td>
+                                    <td colSpan={7}>No Domains</td>
                                 </tr>
                             )}
                             </tbody>

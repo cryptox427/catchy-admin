@@ -81,3 +81,13 @@ export const deleteDomain = id => {
         })
     }))
 }
+
+export const getLogoImg = name => {
+    return new Promise(((resolve, reject) => {
+        axios.get(`${SERVER_DOMAIN}/getLogoImg/?name=${name}`).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            reject(err);
+        })
+    }))
+}
