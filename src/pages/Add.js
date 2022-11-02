@@ -249,6 +249,7 @@ const Add = () => {
                 <select name="salepage" defaultValue={salepage} onChange={el => setSalepage(el.target.value)}>
                     <option value = ''>Select an option</option>
                     <option value = 'make offer'>make offer</option>
+                    <option value = 'increase'>increase</option>
                 </select>
                 <label htmlFor="dailyincrease">Daily Increase</label>
                 <input

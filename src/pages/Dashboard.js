@@ -21,10 +21,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
         if (data && data.length !== 0) setDomains(data);
     }
 
-    const handleDelete = id => {
+    const handleDelete = (id, name) => {
         Swal.fire({
             icon: 'warning',
-            title: `Are you sure to delete ${domains[id].domainname}?`,
+            title: `Are you sure to delete ${name}?`,
             text: "You won't be able to revert this!",
             showCancelButton: true,
             confirmButtonText: 'Yes, delete it!',
@@ -36,7 +36,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
-                        text: `${domains[id].domainname}'s data has been deleted.`,
+                        text: `${name}'s data has been deleted.`,
                         showConfirmButton: false,
                         timer: 1500,
                         willClose(popup) {
@@ -47,7 +47,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     Swal.fire({
                         icon: 'error',
                         title: 'Got Error While Deleting',
-                        text: `${domains[id].domainname}'s data has not been deleted.`,
+                        text: `${name}'s data has not been deleted.`,
                         showConfirmButton: false,
                         timer: 1500,
                     });
@@ -91,7 +91,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                                         <td>{domain.listingdate}</td>
                                         <td className="text-right">
                                             <button
-                                                onClick={() => navigate(`edit/${i + 1}`, { replace: true })}
+                                                onClick={() => navigate(`edit/${domain.id}`, { replace: true })}
                                                 className="button muted-button"
                                             >
                                                 Edit
@@ -99,7 +99,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                                         </td>
                                         <td className="text-left">
                                             <button
-                                                onClick={() => handleDelete(domain.id)}
+                                                onClick={() => handleDelete(domain.id, domain.domainname)}
                                                 className="button muted-button"
                                             >
                                                 Delete
