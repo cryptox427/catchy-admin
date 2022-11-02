@@ -6,15 +6,6 @@ import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
 import {getDomainById, updateDomain, getLogoImg, uploadLogo} from "../api";
 import { SERVER_HOST} from '../config'
-// const cvlist = ['CVVC','CCVC','CVCV','CVC','CCVV','CVCC']
-const cvlist = [
-    {value: 'CVVC', label: 'CVVC'},
-    {value: 'CCVC', label: 'CCVC'},
-    {value: 'CVCV', label: 'CVCV'},
-    {value: 'CVC', label: 'CVC'},
-    {value: 'CCVV', label: 'CCVV'},
-    {value: 'CVCC', label: 'CVCC'},
-]
 
 const optionList = [
     {value: 1, label: 'True'},
@@ -51,11 +42,38 @@ const Edit = () => {
     const [initprice, setInitprice] = useState(0)
     const [haslogo, setHaslogo] = useState(0);
     const [logo, setLogo] = useState(null);
-    const [newlogo, setNewLogo] = useState(null)
+    const [newlogo, setNewLogo] = useState(null);
+    const [startauction, setStartAuction] = useState('');
+    const [cvlist, setCvlist] = useState([])
 
     useEffect(() => {
         fetchData()
     }, [id])
+
+    useEffect(() => {
+        const list = findPermutations('CVCV').concat(findPermutations('CVC')).concat(findPermutations('CVV'))
+        setCvlist(list.map(el => {return {value: el, label: el}}))
+    }, []);
+
+    const findPermutations = (string) => {
+        if (!string || typeof string !== "string"){
+            return "Please enter a string"
+        } else if (string.length < 2 ){
+            return string
+        }
+
+        let permutationsArray = []
+
+        for (let i = 0; i < string.length; i++){
+            let char = string[i]
+
+            let remainingChars = string.slice(0, i) + string.slice(i + 1, string.length)
+
+            for (let permutation of findPermutations(remainingChars)){
+                permutationsArray.push(char + permutation) }
+        }
+        return permutationsArray
+    }
 
     const fetchData = async () => {
         const result = await getDomainById(id);
@@ -88,6 +106,7 @@ const Edit = () => {
             setDailyincrease(data.dailyincrease)
             setInitprice(parseFloat(data.initprice.substring(1).replace(/,/g, '')))
             setHaslogo(data.haslogo)
+            setStartAuction(data.startauction ? new Date(data.startauction) : '')
             if (data.haslogo) {
                 setLogo(`${SERVER_HOST}/logos/${data.name}.${data.extension}.png`)
             }
@@ -139,6 +158,7 @@ const Edit = () => {
             isfeatured: isfeatured.value,
             featuredfrom: featuredfrom !== '' ? new Date(featuredfrom).toISOString() : '',
             featuredto: featuredto !== '' ? new Date(featuredto).toISOString() : '',
+            startauction: startauction !== '' ? new Date(startauction).toISOString() : '',
             referedby: referedby.value,
             rank,
             catchyfeatured: catchyfeatured.value,
@@ -342,22 +362,30 @@ const Edit = () => {
                     <option value = 'make offer'>make offer</option>
                     <option value = 'increase'>increase</option>
                 </select>
-                <label htmlFor="dailyincrease">Daily Increase</label>
-                <input
-                    id="dailyincrease"
-                    type="number"
-                    name="dailyincrease"
-                    value={dailyincrease}
-                    onChange={e => setDailyincrease(e.target.value)}
-                />
-                <label htmlFor="dailyincrease">Init Price</label>
-                <input
-                    id="initprice"
-                    type="number"
-                    name="initprice"
-                    value={initprice}
-                    onChange={e => setInitprice(e.target.value)}
-                />
+                {salepage === 'increase' ? <div>
+                    <label htmlFor="dailyincrease">Daily Increase</label>
+                    <input
+                        id="dailyincrease"
+                        type="number"
+                        name="dailyincrease"
+                        value={dailyincrease}
+                        onChange={e => setDailyincrease(e.target.value)}
+                    />
+                    <label htmlFor="dailyincrease">Init Price</label>
+                    <input
+                        id="initprice"
+                        type="number"
+                        name="initprice"
+                        value={initprice}
+                        onChange={e => setInitprice(e.target.value)}
+                    />
+                    <label htmlFor="startauction">Start Auction</label>
+                    <Datetime
+                        value={startauction}
+                        onChange={el => setStartAuction(new Date(el))}
+                    />
+                </div> : <div/>}
+
                 <div style={{ marginTop: '30px' }}>
                     <input type="submit" value="Update" />
                     <input
