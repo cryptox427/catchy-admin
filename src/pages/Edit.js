@@ -16,7 +16,7 @@ const Edit = () => {
     const navigate = useNavigate();
     const {id} = useParams();
     const [domainname, setDomainname] = useState('');
-    const [memberid, setMemberid] = useState(1);
+    const [memberid, setMemberid] = useState('');
     const [minprice, setMinprice] = useState(0);
     const [countterms, setCountterms] = useState(0)
     const [syllables, setSyllables] = useState(0)
@@ -210,7 +210,7 @@ const Edit = () => {
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"
-                    type="number"
+                    type="text"
                     name="memberid"
                     value={memberid}
                     onChange={e => setMemberid(e.target.value)}
