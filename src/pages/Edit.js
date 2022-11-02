@@ -280,10 +280,13 @@ const Edit = () => {
                     onChange={setIsbrokered}
                 />
                 <label htmlFor="sourcedby">Sourced By</label>
-                <select name="sourcedby" defaultValue={sourcedby} onChange={el => setSourcedby(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <input
+                    id="sourcedby"
+                    type="text"
+                    name="sourcedby"
+                    value={sourcedby}
+                    onChange={e => setSourcedby(e.target.value)}
+                />
                 <label htmlFor="bin">Bin</label>
                 <input
                     id="bin"
