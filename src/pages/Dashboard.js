@@ -67,14 +67,15 @@ const Dashboard = ({ setIsAuthenticated }) => {
                         </div>
                     </header>
                     <div className="contain-table">
+                        <p>{domains.length} domains listed</p>
                         <table className="striped-table">
                             <thead>
                             <tr>
-                                <th>No.</th>
+                                {/*<th>No.</th>*/}
                                 <th>Domain Name</th>
                                 <th>Min Price</th>
                                 <th>Monthly rent</th>
-                                <th>Listing Date</th>
+                                <th>Sale Page</th>
                                 <th colSpan={2} className="text-center">
                                     Actions
                                 </th>
@@ -83,12 +84,12 @@ const Dashboard = ({ setIsAuthenticated }) => {
                             <tbody>
                             {domains && domains.length > 0 ? (
                                 domains.map((domain, i) => (
-                                    <tr key={domain.id}>
-                                        <td>{i + 1}</td>
+                                    <tr key={domain.id} className={domain.isvisible ? 'visible' : 'invisible-custom'}>
+                                        {/*<td>{i + 1}</td>*/}
                                         <td>{domain.domainname}</td>
                                         <td>{domain.minprice}</td>
                                         <td>{domain.monthlyrental}</td>
-                                        <td>{domain.listingdate}</td>
+                                        <td>{domain.salepage}</td>
                                         <td className="text-right">
                                             <button
                                                 onClick={() => navigate(`edit/${domain.id}`, { replace: true })}

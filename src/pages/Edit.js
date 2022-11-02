@@ -20,23 +20,23 @@ const Edit = () => {
     const [minprice, setMinprice] = useState(0);
     const [countterms, setCountterms] = useState(0)
     const [syllables, setSyllables] = useState(0)
-    const [issymetric, setIssymetric] = useState(null)
-    const [isword, setIsword] = useState(null)
-    const [namecv, setNamecv] = useState(null)
+    const [issymetric, setIssymetric] = useState(0)
+    const [isword, setIsword] = useState(0)
+    const [namecv, setNamecv] = useState('')
     const [extension, setExtension] = useState('com')
     const [link, setLink] = useState('')
-    const [isbrokered, setIsbrokered] = useState(null)
-    const [sourcedby, setSourcedby] = useState(null)
+    const [isbrokered, setIsbrokered] = useState(0)
+    const [sourcedby, setSourcedby] = useState('')
     const [bin, setBin] = useState(0)
     const [listingdate, setListingdate] = useState(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`)
     const [monthlyrental, setMonthlyrental] = useState(0)
-    const [isfeatured, setIsfeatured] = useState(null)
+    const [isfeatured, setIsfeatured] = useState(0)
     const [featuredfrom, setFeaturedfrom] = useState('')
     const [featuredto, setFeaturedto] = useState('')
     const [referedby, setReferedby] = useState(0)
     const [rank, setRank] = useState(0)
-    const [catchyfeatured, setCatchyfeatured] = useState(null)
-    const [isvisible, setIsvisible] = useState(null)
+    const [catchyfeatured, setCatchyfeatured] = useState(0)
+    const [isvisible, setIsvisible] = useState(0)
     const [salepage, setSalepage] = useState('make offer')
     const [dailyincrease, setDailyincrease] = useState(0)
     const [initprice, setInitprice] = useState(0)
@@ -91,7 +91,7 @@ const Edit = () => {
             setNamecv({label: data.namecv, value: data.namecv})
             setLink(data.link)
             setIsbrokered({label: data.isbrokered ? 'True' : 'False', value: data.isbrokered})
-            setSourcedby({label: data.sourcedby ? 'True' : 'False', value: data.sourcedby})
+            setSourcedby(data.sourcedby)
             setBin(data.bin)
             setListingdate(new Date(data.listingdate))
             setMonthlyrental(parseFloat(data.monthlyrental.substring(1).replace(/,/g, '')))
@@ -106,7 +106,7 @@ const Edit = () => {
             setDailyincrease(data.dailyincrease)
             setInitprice(parseFloat(data.initprice.substring(1).replace(/,/g, '')))
             setHaslogo(data.haslogo)
-            setStartAuction(data.startauction ? new Date(data.startauction) : '')
+            setStartAuction(data.startauction )
             if (data.haslogo) {
                 setLogo(`${SERVER_HOST}/logos/${data.name}.${data.extension}.png`)
             }
@@ -124,7 +124,7 @@ const Edit = () => {
                 showConfirmButton: true,
             });
         }
-        console.log(listingdate)
+        console.log(listingdate, featuredfrom)
         let haslogo_new = haslogo;
 
         if (newlogo) {
@@ -151,14 +151,14 @@ const Edit = () => {
             extension,
             link,
             isbrokered: isbrokered.value,
-            sourcedby: sourcedby.value,
+            sourcedby: sourcedby,
             bin,
             listingdate: listingdate !== '' ? new Date(listingdate).toISOString() : '',
             monthlyrental,
             isfeatured: isfeatured.value,
-            featuredfrom: featuredfrom !== '' ? new Date(featuredfrom).toISOString() : '',
-            featuredto: featuredto !== '' ? new Date(featuredto).toISOString() : '',
-            startauction: startauction !== '' ? new Date(startauction).toISOString() : '',
+            featuredfrom: featuredfrom ? new Date(featuredfrom).toISOString() : '',
+            featuredto: featuredto ? new Date(featuredto).toISOString() : '',
+            startauction: startauction ? new Date(startauction).toISOString() : '',
             referedby: referedby.value,
             rank,
             catchyfeatured: catchyfeatured.value,
