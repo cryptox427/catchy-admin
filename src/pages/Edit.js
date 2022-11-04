@@ -204,7 +204,7 @@ const Edit = () => {
                     onChange={e => setDomainname(e.target.value)}
                 />
                 <label>Logo Image</label>
-                {(haslogo && logo) ? <img src={logo}/> : <div/>}
+                {(haslogo && logo) ? <img src={logo} style={{width: 130}}/> : <div/>}
                 <input type={'file'} onChange={el => setNewLogo(el.target.files[0])}/>
 
                 <label htmlFor="memberid">Member Id</label>
@@ -300,13 +300,6 @@ const Edit = () => {
                     value={listingdate}
                     onChange={el => setListingdate(new Date(el))}
                 />
-                {/*<input*/}
-                {/*    id="listingdate"*/}
-                {/*    type="date"*/}
-                {/*    name="listingdate"*/}
-                {/*    value={listingdate}*/}
-                {/*    onChange={e => setListingdate(e.target.value)}*/}
-                {/*/>*/}
                 <label htmlFor="monthlyrental">Monthly Rental</label>
                 <input
                     id="monthlyrental"

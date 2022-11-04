@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 import { addDomain, uploadLogo } from "../api";
-const cvlist = ['CVVC','CCVC','CVCV','CVC','CCVV','CVCC']
+import Select from "react-select";
+import Datetime from "react-datetime";
+
+const optionList = [
+    {value: 1, label: 'True'},
+    {value: 0, label: 'False'}
+]
 
 const Add = () => {
     const navigate = useNavigate();
     const [domainname, setDomainname] = useState('');
-    const [memberid, setMemberid] = useState(1);
+    const [memberid, setMemberid] = useState('');
     const [minprice, setMinprice] = useState(0);
     const [countterms, setCountterms] = useState(0)
     const [syllables, setSyllables] = useState(0)
@@ -17,7 +23,7 @@ const Add = () => {
     const [extension, setExtension] = useState('com')
     const [link, setLink] = useState('')
     const [isbrokered, setIsbrokered] = useState(0)
-    const [sourcedby, setSourcedby] = useState(0)
+    const [sourcedby, setSourcedby] = useState('')
     const [bin, setBin] = useState(0)
     const [listingdate, setListingdate] = useState(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`)
     const [monthlyrental, setMonthlyrental] = useState(0)
@@ -32,6 +38,33 @@ const Add = () => {
     const [dailyincrease, setDailyincrease] = useState(0)
     const [initprice, setInitprice] = useState(0)
     const [logo, setLogo] = useState(null)
+    const [startauction, setStartAuction] = useState('');
+    const [cvlist, setCvlist] = useState([])
+
+    useEffect(() => {
+        const list = [''].concat(findPermutations('CVCV').concat(findPermutations('CVC')).concat(findPermutations('CVV')))
+        setCvlist(list.map(el => {return {value: el, label: el}}))
+    }, []);
+
+    const findPermutations = (string) => {
+        if (!string || typeof string !== "string"){
+            return "Please enter a string"
+        } else if (string.length < 2 ){
+            return string
+        }
+
+        let permutationsArray = []
+
+        for (let i = 0; i < string.length; i++){
+            let char = string[i]
+
+            let remainingChars = string.slice(0, i) + string.slice(i + 1, string.length)
+
+            for (let permutation of findPermutations(remainingChars)){
+                permutationsArray.push(char + permutation) }
+        }
+        return permutationsArray
+    }
 
     const handleAdd = async e => {
         e.preventDefault();
@@ -56,8 +89,35 @@ const Add = () => {
             }
         }
 
-        const addResult = await addDomain({memberid, domainname, minprice, countterms, syllables, issymetric, isword, namecv, extension, link, isbrokered, sourcedby, bin, listingdate, monthlyrental, isfeatured,
-            featuredfrom, featuredto, referedby, rank, catchyfeatured, isvisible, salepage, dailyincrease,initprice, haslogo})
+        const addResult = await addDomain({
+            memberid,
+            domainname,
+            minprice,
+            countterms,
+            syllables,
+            issymetric: issymetric.value,
+            isword: isword.value,
+            namecv: namecv.value,
+            extension,
+            link,
+            isbrokered: isbrokered.value,
+            sourcedby: sourcedby,
+            bin,
+            listingdate: listingdate !== '' ? new Date(listingdate).toISOString() : '',
+            monthlyrental,
+            isfeatured: isfeatured.value,
+            featuredfrom: featuredfrom ? new Date(featuredfrom).toISOString() : '',
+            featuredto: featuredto ? new Date(featuredto).toISOString() : '',
+            startauction: startauction ? new Date(startauction).toISOString() : '',
+            referedby: referedby.value,
+            rank,
+            catchyfeatured: catchyfeatured.value,
+            isvisible:  isvisible.value,
+            salepage,
+            dailyincrease,
+            initprice,
+            haslogo
+        })
         if (addResult.success) {
             Swal.fire({
                 icon: 'success',
@@ -103,7 +163,7 @@ const Add = () => {
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"
-                    type="number"
+                    type="text"
                     name="memberid"
                     value={memberid}
                     onChange={e => setMemberid(e.target.value)}
@@ -141,22 +201,23 @@ const Add = () => {
                     onChange={e => setSyllables(e.target.value)}
                 />
                 <label htmlFor="issymetric">Is Symetric</label>
-                <select name="issymetric" defaultValue={issymetric} onChange={(el) => setIssymetric(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <Select
+                    value={issymetric}
+                    options={optionList}
+                    onChange={setIssymetric}
+                />
                 <label htmlFor="isword">Is Word</label>
-                <select name="isword" defaultValue={isword} onChange={el => setIsword(el.target.value)}>
-                    <option value={1}>True</option>
-                    <option value={0}>False</option>
-                </select>
+                <Select
+                    value={isword}
+                    options={optionList}
+                    onChange={setIsword}
+                />
                 <label htmlFor="namecv">NameCV</label>
-                <select name="namecv" defaultValue={namecv} onChange={(el) => setNamecv(el.target.value)}>
-                    <option value = ''>Select an option</option>
-                    {cvlist.map(cv => {
-                        return <option key={cv} value={cv}>{cv}</option>
-                    })}
-                </select>
+                <Select
+                    value={namecv}
+                    options={cvlist}
+                    onChange={setNamecv}
+                />
                 <label htmlFor="link">Link</label>
                 <input
                     id="link"
@@ -166,15 +227,19 @@ const Add = () => {
                     onChange={e => setLink(e.target.value)}
                 />
                 <label htmlFor="isbrokered">Is Brokered</label>
-                <select name="isbrokered" defaultValue={isbrokered} onChange={el => setIsbrokered(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <Select
+                    value={isbrokered}
+                    options={optionList}
+                    onChange={setIsbrokered}
+                />
                 <label htmlFor="sourcedby">Sourced By</label>
-                <select name="sourcedby" defaultValue={sourcedby} onChange={el => setSourcedby(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <input
+                    id="sourcedby"
+                    type="text"
+                    name="sourcedby"
+                    value={sourcedby}
+                    onChange={e => setSourcedby(e.target.value)}
+                />
                 <label htmlFor="bin">Bin</label>
                 <input
                     id="bin"
@@ -184,12 +249,9 @@ const Add = () => {
                     onChange={e => setBin(e.target.value)}
                 />
                 <label htmlFor="listingdate">Listing Date</label>
-                <input
-                    id="listingdate"
-                    type="date"
-                    name="listingdate"
+                <Datetime
                     value={listingdate}
-                    onChange={e => setListingdate(e.target.value)}
+                    onChange={el => setListingdate(new Date(el))}
                 />
                 <label htmlFor="monthlyrental">Monthly Rental</label>
                 <input
@@ -200,28 +262,23 @@ const Add = () => {
                     onChange={e => setMonthlyrental(e.target.value)}
                 />
                 <label htmlFor="isfeatured">Is Featured</label>
-                <select name="isfeatured" defaultValue={isfeatured} onChange={el => setIsfeatured(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
-                {isfeatured && <div>
+                <Select
+                    value={isfeatured}
+                    options={optionList}
+                    onChange={setIsfeatured}
+                />
+                {isfeatured?.value ? <div>
                     <label htmlFor="featuredfrom">Featured From Date</label>
-                    <input
-                        id="featuredfrom"
-                        type="date"
-                        name="featuredfrom"
+                    <Datetime
                         value={featuredfrom}
-                        onChange={e => setFeaturedfrom(e.target.value)}
+                        onChange={el => setFeaturedfrom(new Date(el))}
                     />
                     <label htmlFor="featuredto">Featured To Date</label>
-                    <input
-                        id="featuredto"
-                        type="date"
-                        name="featuredto"
+                    <Datetime
                         value={featuredto}
-                        onChange={e => setFeaturedto(e.target.value)}
+                        onChange={el => setFeaturedto(new Date(el))}
                     />
-                </div>}
+                </div> : <div/>}
                 <label htmlFor="rank">Rank</label>
                 <input
                     id="rank"
@@ -231,42 +288,52 @@ const Add = () => {
                     onChange={e => setRank(e.target.value)}
                 />
                 <label htmlFor="referedby">Referred By</label>
-                <select name="referedby" defaultValue={referedby} onChange={el => setReferedby(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <Select
+                    value={referedby}
+                    options={optionList}
+                    onChange={setReferedby}
+                />
                 <label htmlFor="catchyfeatured">Catchy Featured</label>
-                <select name="catchyfeatured" defaultValue={catchyfeatured} onChange={el => setCatchyfeatured(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <Select
+                    value={catchyfeatured}
+                    options={optionList}
+                    onChange={setCatchyfeatured}
+                />
                 <label htmlFor="isvisible">Is Visible</label>
-                <select name="isvisible" defaultValue={isvisible} onChange={el => setIsvisible(el.target.value)}>
-                    <option value = {1}>True</option>
-                    <option value = {0}>False</option>
-                </select>
+                <Select
+                    value={isvisible}
+                    options={optionList}
+                    onChange={setIsvisible}
+                />
                 <label htmlFor="salepage">Sale Page</label>
                 <select name="salepage" defaultValue={salepage} onChange={el => setSalepage(el.target.value)}>
                     <option value = ''>Select an option</option>
                     <option value = 'make offer'>make offer</option>
                     <option value = 'increase'>increase</option>
                 </select>
-                <label htmlFor="dailyincrease">Daily Increase</label>
-                <input
-                    id="dailyincrease"
-                    type="number"
-                    name="dailyincrease"
-                    value={dailyincrease}
-                    onChange={e => setDailyincrease(e.target.value)}
-                />
-                <label htmlFor="dailyincrease">Init Price</label>
-                <input
-                    id="initprice"
-                    type="number"
-                    name="initprice"
-                    value={initprice}
-                    onChange={e => setInitprice(e.target.value)}
-                />
+                {salepage === 'increase' ? <div>
+                    <label htmlFor="dailyincrease">Daily Increase</label>
+                    <input
+                        id="dailyincrease"
+                        type="number"
+                        name="dailyincrease"
+                        value={dailyincrease}
+                        onChange={e => setDailyincrease(e.target.value)}
+                    />
+                    <label htmlFor="dailyincrease">Init Price</label>
+                    <input
+                        id="initprice"
+                        type="number"
+                        name="initprice"
+                        value={initprice}
+                        onChange={e => setInitprice(e.target.value)}
+                    />
+                    <label htmlFor="startauction">Start Auction</label>
+                    <Datetime
+                        value={startauction}
+                        onChange={el => setStartAuction(new Date(el))}
+                    />
+                </div> : <div/>}
                 <div style={{ marginTop: '30px' }}>
                     <input type="submit" value="Add" />
                     <input
