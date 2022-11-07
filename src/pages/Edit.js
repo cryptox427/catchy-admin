@@ -12,6 +12,11 @@ const optionList = [
     {value: 0, label: 'False'}
 ]
 
+const salepageOpList = [
+    {value: 'make offer', label: 'make offer'},
+    {value: 'increase', label: 'increase'}
+]
+
 const Edit = () => {
     const navigate = useNavigate();
     const {id} = useParams();
@@ -102,7 +107,7 @@ const Edit = () => {
             setFeaturedfrom(data.featuredfrom)
             setFeaturedto(data.featuredto)
             setIsvisible({label: data.isvisible ? 'True' : 'False', value: data.isvisible})
-            setSalepage(data.salepage)
+            setSalepage({label: data.salepage, value: data.salepage})
             setDailyincrease(data.dailyincrease)
             setInitprice(parseFloat(data.initprice.substring(1).replace(/,/g, '')))
             setHaslogo(data.haslogo)
@@ -113,18 +118,23 @@ const Edit = () => {
         }
     }
 
+    const swalFunc = (type, title, text) => {
+        Swal.fire({
+            icon: type,
+            title: title,
+            text: text,
+            showConfirmButton: true,
+        });
+    }
+
     const handleUpdate = async e => {
         e.preventDefault();
 
-        if (!domainname) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'All fields are required.',
-                showConfirmButton: true,
-            });
-        }
-        console.log(listingdate, featuredfrom)
+        if (!domainname) {return swalFunc('error', 'Missing Insert', 'Domain name is missing');}
+        if ((!(listingdate instanceof Date && !isNaN(listingdate))) && typeof listingdate !== 'string') {return swalFunc('error', 'Missing Insert', 'Listing Date is missing');}
+        if (salepage.value === 'increase' && (!(startauction instanceof Date && !isNaN(startauction))) && typeof startauction !== 'string') {return swalFunc('error', 'Missing Insert', 'Start Auction Date is missing');}
+        if (salepage.value === 'increase' && !dailyincrease) {return swalFunc('error', 'Missing Insert', 'Daily Increase is missing');}
+        if (salepage.value === 'increase' && !initprice) {return swalFunc('error', 'Missing Insert', 'Init Price is missing');}
         let haslogo_new = haslogo;
 
         if (newlogo) {
@@ -163,7 +173,7 @@ const Edit = () => {
             rank,
             catchyfeatured: catchyfeatured.value,
             isvisible:  isvisible.value,
-            salepage,
+            salepage: salepage.value,
             dailyincrease,
             initprice,
             haslogo: haslogo_new
@@ -195,6 +205,14 @@ const Edit = () => {
         <div className="small-container">
             <form onSubmit={handleUpdate}>
                 <h1>Edit Domain</h1>
+                <div>
+                    <input
+                        className="muted-button"
+                        type="button"
+                        value="Back"
+                        onClick={() => navigate('/dashboard', {replace: true})}
+                    />
+                </div>
                 <label htmlFor="domainname">Domain Name</label>
                 <input
                     id="domainname"
@@ -202,6 +220,7 @@ const Edit = () => {
                     name="domainname"
                     value={domainname}
                     onChange={e => setDomainname(e.target.value)}
+                    required
                 />
                 <label>Logo Image</label>
                 {(haslogo && logo) ? <img src={logo} style={{width: 130}}/> : <div/>}
@@ -222,6 +241,7 @@ const Edit = () => {
                     name="extension"
                     value={extension}
                     onChange={e => setExtension(e.target.value)}
+                    required
                 />
                 <label htmlFor="minprice">Min Price</label>
                 <input
@@ -230,6 +250,7 @@ const Edit = () => {
                     name="minprice"
                     value={minprice}
                     onChange={e => setMinprice(e.target.value)}
+                    required
                 />
                 <label htmlFor="countterms">Count Terms</label>
                 <input
@@ -238,6 +259,7 @@ const Edit = () => {
                     name="countterms"
                     value={countterms}
                     onChange={e => setCountterms(e.target.value)}
+                    required
                 />
                 <label htmlFor="syllables">Syllables</label>
                 <input
@@ -246,6 +268,7 @@ const Edit = () => {
                     name="syllables"
                     value={syllables}
                     onChange={e => setSyllables(e.target.value)}
+                    required
                 />
                 <label htmlFor="issymetric">Is Symetric</label>
                 <Select
@@ -333,6 +356,7 @@ const Edit = () => {
                     name="rank"
                     value={rank}
                     onChange={e => setRank(e.target.value)}
+                    required
                 />
                 <label htmlFor="referedby">Referred By</label>
                 <Select
@@ -353,12 +377,12 @@ const Edit = () => {
                     onChange={setIsvisible}
                 />
                 <label htmlFor="salepage">Sale Page</label>
-                <select name="salepage" defaultValue={salepage} onChange={el => setSalepage(el.target.value)}>
-                    <option value = ''>Select an option</option>
-                    <option value = 'make offer'>make offer</option>
-                    <option value = 'increase'>increase</option>
-                </select>
-                {salepage === 'increase' ? <div>
+                <Select
+                    value={salepage}
+                    options={salepageOpList}
+                    onChange={setSalepage}
+                />
+                {salepage && salepage.value === 'increase' ? <div>
                     <label htmlFor="dailyincrease">Daily Increase</label>
                     <input
                         id="dailyincrease"

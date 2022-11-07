@@ -10,6 +10,11 @@ const optionList = [
     {value: 0, label: 'False'}
 ]
 
+const salepageOpList = [
+    {value: 'make offer', label: 'make offer'},
+    {value: 'increase', label: 'increase'}
+]
+
 const Add = () => {
     const navigate = useNavigate();
     const [domainname, setDomainname] = useState('');
@@ -17,24 +22,24 @@ const Add = () => {
     const [minprice, setMinprice] = useState(0);
     const [countterms, setCountterms] = useState(0)
     const [syllables, setSyllables] = useState(0)
-    const [issymetric, setIssymetric] = useState(0)
-    const [isword, setIsword] = useState(0)
+    const [issymetric, setIssymetric] = useState(optionList[1])
+    const [isword, setIsword] = useState(optionList[1])
     const [namecv, setNamecv] = useState('')
     const [extension, setExtension] = useState('com')
     const [link, setLink] = useState('')
-    const [isbrokered, setIsbrokered] = useState(0)
+    const [isbrokered, setIsbrokered] = useState(optionList[1])
     const [sourcedby, setSourcedby] = useState('')
     const [bin, setBin] = useState(0)
     const [listingdate, setListingdate] = useState(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`)
     const [monthlyrental, setMonthlyrental] = useState(0)
-    const [isfeatured, setIsfeatured] = useState(0)
+    const [isfeatured, setIsfeatured] = useState(optionList[1])
     const [featuredfrom, setFeaturedfrom] = useState('')
     const [featuredto, setFeaturedto] = useState('')
-    const [referedby, setReferedby] = useState(0)
+    const [referedby, setReferedby] = useState(optionList[1])
     const [rank, setRank] = useState(0)
-    const [catchyfeatured, setCatchyfeatured] = useState(0)
-    const [isvisible, setIsvisible] = useState(1)
-    const [salepage, setSalepage] = useState('make offer')
+    const [catchyfeatured, setCatchyfeatured] = useState(optionList[1])
+    const [isvisible, setIsvisible] = useState(optionList[0])
+    const [salepage, setSalepage] = useState(salepageOpList[0])
     const [dailyincrease, setDailyincrease] = useState(0)
     const [initprice, setInitprice] = useState(0)
     const [logo, setLogo] = useState(null)
@@ -66,17 +71,28 @@ const Add = () => {
         return permutationsArray
     }
 
+    const swalFunc = (type, title, text) => {
+        Swal.fire({
+            icon: type,
+            title: title,
+            text: text,
+            showConfirmButton: true,
+        });
+    }
+
     const handleAdd = async e => {
         e.preventDefault();
+        console.log(isfeatured, referedby)
 
-        if (!domainname) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Domain Name is required.',
-                showConfirmButton: true,
-            });
-        }
+        if (!domainname) {return swalFunc('error', 'Missing Insert', 'Domain name is missing');}
+        if (isfeatured.value === undefined && isfeatured.value !== 0) {return swalFunc('error', 'Missing Insert', 'Featured is missing');}
+        if (referedby.value === undefined && referedby.value !== 0) {return swalFunc('error', 'Missing Insert', 'Referred is missing');}
+        if ((!(listingdate instanceof Date && !isNaN(listingdate))) && typeof listingdate !== 'string') {return swalFunc('error', 'Missing Insert', 'Listing Date is missing');}
+        if (salepage.value === 'increase' && (!(startauction instanceof Date && !isNaN(startauction))) && typeof startauction !== 'string') {return swalFunc('error', 'Missing Insert', 'Start Auction Date is missing');}
+        if (salepage.value === 'increase' && !dailyincrease) {return swalFunc('error', 'Missing Insert', 'Daily Increase is missing');}
+        if (salepage.value === 'increase' && !initprice) {return swalFunc('error', 'Missing Insert', 'Init Price is missing');}
+        if (!namecv.value) {return swalFunc('error', 'Missing Insert', 'NameCV is missing');}
+
         let haslogo = 0;
         if (logo) {
             const formData = new FormData()
@@ -113,7 +129,7 @@ const Add = () => {
             rank,
             catchyfeatured: catchyfeatured.value,
             isvisible:  isvisible.value,
-            salepage,
+            salepage: salepage.value,
             dailyincrease,
             initprice,
             haslogo
@@ -150,6 +166,14 @@ const Add = () => {
         <div className="small-container">
             <form onSubmit={handleAdd}>
                 <h1>Add Domain</h1>
+                <div>
+                    <input
+                        className="muted-button"
+                        type="button"
+                        value="Back"
+                        onClick={() => navigate('/dashboard', {replace: true})}
+                    />
+                </div>
                 <label htmlFor="domainname">Domain Name</label>
                 <input
                     id="domainname"
@@ -157,6 +181,7 @@ const Add = () => {
                     name="domainname"
                     value={domainname}
                     onChange={e => setDomainname(e.target.value)}
+                    required
                 />
                 <label>Logo Image</label>
                 <input type={'file'} onChange={el => setLogo(el.target.files[0])}/>
@@ -167,6 +192,7 @@ const Add = () => {
                     name="memberid"
                     value={memberid}
                     onChange={e => setMemberid(e.target.value)}
+                    required
                 />
                 <label htmlFor="extension">Extension</label>
                 <input
@@ -175,6 +201,7 @@ const Add = () => {
                     name="extension"
                     value={extension}
                     onChange={e => setExtension(e.target.value)}
+                    required
                 />
                 <label htmlFor="minprice">Min Price</label>
                 <input
@@ -183,6 +210,7 @@ const Add = () => {
                     name="minprice"
                     value={minprice}
                     onChange={e => setMinprice(e.target.value)}
+                    required
                 />
                 <label htmlFor="countterms">Count Terms</label>
                 <input
@@ -191,6 +219,7 @@ const Add = () => {
                     name="countterms"
                     value={countterms}
                     onChange={e => setCountterms(e.target.value)}
+                    required
                 />
                 <label htmlFor="syllables">Syllables</label>
                 <input
@@ -199,6 +228,7 @@ const Add = () => {
                     name="syllables"
                     value={syllables}
                     onChange={e => setSyllables(e.target.value)}
+                    required
                 />
                 <label htmlFor="issymetric">Is Symetric</label>
                 <Select
@@ -306,11 +336,11 @@ const Add = () => {
                     onChange={setIsvisible}
                 />
                 <label htmlFor="salepage">Sale Page</label>
-                <select name="salepage" defaultValue={salepage} onChange={el => setSalepage(el.target.value)}>
-                    <option value = ''>Select an option</option>
-                    <option value = 'make offer'>make offer</option>
-                    <option value = 'increase'>increase</option>
-                </select>
+                <Select
+                    value={salepage}
+                    options={salepageOpList}
+                    onChange={setSalepage}
+                />
                 {salepage === 'increase' ? <div>
                     <label htmlFor="dailyincrease">Daily Increase</label>
                     <input
