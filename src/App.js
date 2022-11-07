@@ -13,7 +13,7 @@ export default function App() {
             <Route element={<HomeLayout/>}>
                 <Route path={'/'} element={<LoginPage/>}/>
             </Route>
-            <Route path={'/dashboard'} element={<ProtectedLayout/>}>
+            <Route path={'/admin'} element={<ProtectedLayout/>}>
                 <Route path={''} element={<Dashboard/>}/>
                 <Route path={'add'} element={<Add/>}/>
                 <Route path={'edit/:id'} element={<Edit/>}/>

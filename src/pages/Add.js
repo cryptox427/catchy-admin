@@ -171,7 +171,7 @@ const Add = () => {
                         className="muted-button"
                         type="button"
                         value="Back"
-                        onClick={() => navigate('/dashboard', {replace: true})}
+                        onClick={() => navigate('/admin', {replace: true})}
                     />
                 </div>
                 <label htmlFor="domainname">Domain Name</label>
@@ -371,7 +371,7 @@ const Add = () => {
                         className="muted-button"
                         type="button"
                         value="Cancel"
-                        onClick={() => navigate('/dashboard', {replace: true})}
+                        onClick={() => navigate('/admin', {replace: true})}
                     />
                 </div>
             </form>

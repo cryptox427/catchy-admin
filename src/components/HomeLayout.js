@@ -7,7 +7,7 @@ export const HomeLayout = () => {
 
     if (user) {
         console.log('user', user)
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/admin" replace />;
     }
 
     return (
