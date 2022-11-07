@@ -64,7 +64,7 @@ const Login = ({ setIsAuthenticated }) => {
 
     return (
         <div className="small-container">
-            <h1>Admin Login11</h1>
+            <h1>Admin Login</h1>
             <label htmlFor="email">Admin Email</label>
             <input
                 id="email"
