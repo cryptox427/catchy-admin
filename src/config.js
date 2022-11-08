@@ -1,5 +1,5 @@
 module.exports = {
-    SERVER_DOMAIN : 'http://localhost:3333/admin',
+    SERVER_DOMAIN : 'https://admin.catchy.com/admin',
     ADMIN_EMAIL : 'info@cybertonic.com',
-    SERVER_HOST: 'http://localhost:3333'
+    SERVER_HOST: 'https://admin.catchy.com'
 }
