@@ -127,6 +127,26 @@ const Edit = () => {
         });
     }
 
+    const handleLogoUpload = async () => {
+        if (newlogo) {
+            const formData = new FormData()
+            formData.append('logo', newlogo)
+            formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
+            const result = await uploadLogo(formData)
+            console.log('upload result---', result)
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Logo Uploaded!',
+                    text: `Uploaded logo successfully`,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setHaslogo(1)
+            }
+        }
+    }
+
     const handleUpdate = async e => {
         e.preventDefault();
 
@@ -135,18 +155,6 @@ const Edit = () => {
         if (salepage.value === 'increase' && (!(startauction instanceof Date && !isNaN(startauction))) && typeof startauction !== 'string') {return swalFunc('error', 'Missing Insert', 'Start Auction Date is missing');}
         if (salepage.value === 'increase' && !dailyincrease) {return swalFunc('error', 'Missing Insert', 'Daily Increase is missing');}
         if (salepage.value === 'increase' && !initprice) {return swalFunc('error', 'Missing Insert', 'Init Price is missing');}
-        let haslogo_new = haslogo;
-
-        if (newlogo) {
-            const formData = new FormData()
-            formData.append('logo', newlogo)
-            formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
-            const result = await uploadLogo(formData)
-            console.log('upload result---', result)
-            if (result.success) {
-                haslogo_new = 1
-            }
-        }
 
         const updateResult = await updateDomain({
             id,
@@ -176,7 +184,7 @@ const Edit = () => {
             salepage: salepage.value,
             dailyincrease,
             initprice,
-            haslogo: haslogo_new
+            haslogo
         })
         if (updateResult.success) {
             Swal.fire({
@@ -225,7 +233,15 @@ const Edit = () => {
                 <label>Logo Image</label>
                 {(haslogo && logo) ? <img src={logo} style={{width: 130}}/> : <div/>}
                 <input type={'file'} onChange={el => setNewLogo(el.target.files[0])}/>
-
+                {newlogo ? <img src={URL.createObjectURL(newlogo)} style={{width: 130}}/> : <div/>}
+                <br/>
+                <input
+                    style={{ marginTop: '12px' }}
+                    className="success"
+                    type="button"
+                    value="Upload Logo"
+                    onClick={() => {handleLogoUpload()}}
+                />
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"
