@@ -45,6 +45,7 @@ const Add = () => {
     const [logo, setLogo] = useState(null)
     const [startauction, setStartAuction] = useState('');
     const [cvlist, setCvlist] = useState([])
+    const [haslogo, setHaslogo] = useState(0);
 
     useEffect(() => {
         const list = [''].concat(findPermutations('CVCV').concat(findPermutations('CVC')).concat(findPermutations('CVV')))
@@ -80,6 +81,28 @@ const Add = () => {
         });
     }
 
+    const handleLogoUpload = async () => {
+        if (logo) {
+            const formData = new FormData()
+            formData.append('logo', logo)
+            formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
+            const result = await uploadLogo(formData)
+            console.log('upload result---', result)
+            if (result.success) {
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logo Uploaded!',
+                        text: `Uploaded logo successfully`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    setHaslogo(1)
+                }
+            }
+        }
+    }
+
     const handleAdd = async e => {
         e.preventDefault();
         console.log(isfeatured, referedby)
@@ -92,18 +115,6 @@ const Add = () => {
         if (salepage.value === 'increase' && !dailyincrease) {return swalFunc('error', 'Missing Insert', 'Daily Increase is missing');}
         if (salepage.value === 'increase' && !initprice) {return swalFunc('error', 'Missing Insert', 'Init Price is missing');}
         if (!namecv.value) {return swalFunc('error', 'Missing Insert', 'NameCV is missing');}
-
-        let haslogo = 0;
-        if (logo) {
-            const formData = new FormData()
-            formData.append('logo', logo)
-            formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
-            const result = await uploadLogo(formData)
-            console.log('upload result---', result)
-            if (result.success) {
-                haslogo = 1
-            }
-        }
 
         const addResult = await addDomain({
             memberid,
@@ -153,15 +164,6 @@ const Add = () => {
         }
 
     };
-
-    const handleUpload = async () => {
-        const formData = new FormData()
-        formData.append('logo', logo)
-        formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
-        const result = await uploadLogo(formData)
-        console.log('upload result---', result)
-    }
-
     return (
         <div className="small-container">
             <form onSubmit={handleAdd}>
@@ -185,6 +187,15 @@ const Add = () => {
                 />
                 <label>Logo Image</label>
                 <input type={'file'} onChange={el => setLogo(el.target.files[0])}/>
+                {logo ? <img src={URL.createObjectURL(logo)} style={{width: 130}}/> : <div/>}
+                <br/>
+                <input
+                    style={{ marginTop: '12px' }}
+                    className="success"
+                    type="button"
+                    value="Upload Logo"
+                    onClick={() => {handleLogoUpload()}}
+                />
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"
