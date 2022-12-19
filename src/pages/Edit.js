@@ -129,6 +129,7 @@ const Edit = () => {
 
     const handleLogoUpload = async () => {
         if (newlogo) {
+            if (domainname.includes('.')){return swalFunc('error', 'Field Error', 'Domain name cannot include extension');}
             const formData = new FormData()
             formData.append('logo', newlogo)
             formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
@@ -151,6 +152,7 @@ const Edit = () => {
         e.preventDefault();
 
         if (!domainname) {return swalFunc('error', 'Missing Insert', 'Domain name is missing');}
+        if (domainname.includes('.')){return swalFunc('error', 'Field Error', 'Domain name cannot include extension');}
         if ((!(listingdate instanceof Date && !isNaN(listingdate))) && typeof listingdate !== 'string') {return swalFunc('error', 'Missing Insert', 'Listing Date is missing');}
         if (salepage.value === 'increase' && (!(startauction instanceof Date && !isNaN(startauction))) && typeof startauction !== 'string') {return swalFunc('error', 'Missing Insert', 'Start Auction Date is missing');}
         if (salepage.value === 'increase' && !dailyincrease) {return swalFunc('error', 'Missing Insert', 'Daily Increase is missing');}
@@ -235,13 +237,13 @@ const Edit = () => {
                 <input type={'file'} onChange={el => setNewLogo(el.target.files[0])}/>
                 {newlogo ? <img src={URL.createObjectURL(newlogo)} style={{width: 130}}/> : <div/>}
                 <br/>
-                <input
+                {newlogo ? <input
                     style={{ marginTop: '12px' }}
                     className="success"
                     type="button"
                     value="Upload Logo"
                     onClick={() => {handleLogoUpload()}}
-                />
+                />: <div/> }
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"

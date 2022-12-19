@@ -83,6 +83,7 @@ const Add = () => {
 
     const handleLogoUpload = async () => {
         if (logo) {
+            if (domainname.includes('.')){return swalFunc('error', 'Field Error', 'Domain name cannot include extension');}
             const formData = new FormData()
             formData.append('logo', logo)
             formData.append('filename', `${domainname.toLowerCase()}.${extension}`)
@@ -108,6 +109,7 @@ const Add = () => {
         console.log(isfeatured, referedby)
 
         if (!domainname) {return swalFunc('error', 'Missing Insert', 'Domain name is missing');}
+        if (domainname.includes('.')){return swalFunc('error', 'Field Error', 'Domain name cannot include extension');}
         if (isfeatured.value === undefined && isfeatured.value !== 0) {return swalFunc('error', 'Missing Insert', 'Featured is missing');}
         if (referedby.value === undefined && referedby.value !== 0) {return swalFunc('error', 'Missing Insert', 'Referred is missing');}
         if ((!(listingdate instanceof Date && !isNaN(listingdate))) && typeof listingdate !== 'string') {return swalFunc('error', 'Missing Insert', 'Listing Date is missing');}
@@ -189,13 +191,13 @@ const Add = () => {
                 <input type={'file'} onChange={el => setLogo(el.target.files[0])}/>
                 {logo ? <img src={URL.createObjectURL(logo)} style={{width: 130}}/> : <div/>}
                 <br/>
-                <input
+                {logo ? <input
                     style={{ marginTop: '12px' }}
                     className="success"
                     type="button"
                     value="Upload Logo"
                     onClick={() => {handleLogoUpload()}}
-                />
+                />: <div/>}
                 <label htmlFor="memberid">Member Id</label>
                 <input
                     id="memberid"
